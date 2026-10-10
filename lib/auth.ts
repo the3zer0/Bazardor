@@ -11,6 +11,12 @@ const githubClientSecret = process.env.GITHUB_CLIENT_SECRET?.trim();
 const baseURL =
   process.env.BETTER_AUTH_URL?.trim() ||
   "http://localhost:3000";
+const trustedOrigins = new Set([
+  baseURL,
+  process.env.NEXT_PUBLIC_APP_URL?.trim(),
+  "https://bazardor-azure.vercel.app",
+  "https://bazardor-mdayatmahmud101-4703.vercel.app",
+].filter((origin): origin is string => Boolean(origin)));
 const secret = process.env.BETTER_AUTH_SECRET?.trim();
 
 if (!secret && process.env.NODE_ENV === "production") {
@@ -44,6 +50,7 @@ const socialProviders = {
 export const auth = betterAuth({
   secret: secret || "development-only-change-this-secret",
   baseURL,
+  trustedOrigins: [...trustedOrigins],
   onAPIError: {
     errorURL: `${baseURL}/signin`,
   },
