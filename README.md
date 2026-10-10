@@ -16,7 +16,7 @@
 
 - Next.js 16 App Router with TypeScript
 - Tailwind CSS 4 and scoped CSS design tokens
-- Better Auth 1.7 with Drizzle and local SQLite
+- Better Auth 1.7 with Drizzle and SQLite/libSQL (local SQLite or Turso)
 - React Hot Toast
 - API: `https://api.api-store.workers.dev/api/bazardor`
 
@@ -30,7 +30,9 @@ npm run dev
 
 Open `http://localhost:3000`.
 
-The local Better Auth database is stored in `auth.db`, which is ignored by Git. Set `BETTER_AUTH_SECRET` to a long random value. Change the API with `BAZARDOR_API_URL`; the alternative is `https://api.abcz.workers.dev/api/bazardor`.
+For local development, Better Auth stores data in `auth.db`, which is ignored by Git. Set `BETTER_AUTH_SECRET` to a long random value. Change the API with `BAZARDOR_API_URL`; the alternative is `https://api.abcz.workers.dev/api/bazardor`.
+
+For Vercel, connect a Turso database to the project so Vercel provides `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in Production and Preview. The app uses those credentials when present and creates Better Auth's core tables the first time the auth endpoint is used. Without Turso credentials, local development continues to use `BETTER_AUTH_DB_PATH` (default `auth.db`).
 
 ## Authentication configuration
 
