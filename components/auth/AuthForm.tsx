@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 
@@ -19,6 +19,20 @@ export function AuthForm({ mode, emailPasswordEnabled, googleEnabled, githubEnab
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const isSignUp = mode === "signup";
+
+  useEffect(() => {
+    const resetPendingState = () => setLoading(false);
+
+    // OAuth redirects leave the form pending. Browsers may restore that page
+    // from the back/forward cache instead of mounting it again.
+    window.addEventListener("pageshow", resetPendingState);
+    window.addEventListener("popstate", resetPendingState);
+
+    return () => {
+      window.removeEventListener("pageshow", resetPendingState);
+      window.removeEventListener("popstate", resetPendingState);
+    };
+  }, []);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
