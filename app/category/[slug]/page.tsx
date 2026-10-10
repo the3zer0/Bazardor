@@ -4,13 +4,22 @@ import { ProductSort } from "@/components/products/ProductSort";
 import { getCategories, getCategory, getProducts } from "@/lib/api";
 
 export const instant = false;
+const BUILD_VALIDATION_SLUG = "__build_validation__";
 
 export async function generateStaticParams() {
-  try { return (await getCategories()).map((category) => ({ slug: category.slug })); } catch { return []; }
+  try {
+    const categories = await getCategories();
+    return categories.length
+      ? categories.map((category) => ({ slug: category.slug }))
+      : [{ slug: BUILD_VALIDATION_SLUG }];
+  } catch {
+    return [{ slug: BUILD_VALIDATION_SLUG }];
+  }
 }
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  if (slug === BUILD_VALIDATION_SLUG) notFound();
   let category;
   try {
     category = await getCategory(slug);
