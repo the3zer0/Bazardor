@@ -1,80 +1,155 @@
-# বাজার দর (BazarDor)
+<div align="center">
 
-বাজার দর is a Bengali market-price dashboard for checking everyday product prices in one calm, readable place. It uses the supplied market API and keeps the UI focused on quick comparison across categories and bazaars.
+<img src="./public/logo-icon.png" alt="BazarDor logo" width="80"/>
 
-## Features
+# বাজার দর · BazarDor
 
-- Bengali product names, units, prices, percentages, and numerals.
-- Home sections for the six biggest price increases and decreases.
-- Responsive product cards with a continuously scrolling price ticker.
-- Category pages with numeric low-to-high and high-to-low sorting.
-- Protected product details with minimum, maximum, average, and market-level prices.
-- Better Auth email/password accounts, Google/GitHub sign-in when provider credentials are configured, and profile updates.
-- Loading, API error, empty, invalid-route, and protected-route states.
+**Bangladesh's everyday market prices, presented in a clear Bengali-first dashboard.**
 
-## Technology
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=nextdotjs)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Better Auth](https://img.shields.io/badge/Auth-Better_Auth-222222)](https://www.better-auth.com/)
 
-- Next.js 16 App Router with TypeScript
-- Tailwind CSS 4 and scoped CSS design tokens
-- Better Auth 1.7 with Drizzle and SQLite/libSQL (local SQLite or Turso)
-- React Hot Toast
-- API: `https://api.api-store.workers.dev/api/bazardor`
+**[🌐 Live Demo](https://bazardor-azure.vercel.app) · [💻 Source Code](https://github.com/the3zer0/Bazardor)**
 
-## Getting started
+</div>
+
+---
+
+## Overview
+
+**BazarDor (বাজার দর)** is a responsive Bengali market-price explorer. It brings everyday grocery and commodity prices into one interface so visitors can compare products, see price movements, and explore market-level details. Prices are retrieved from an external market API instead of being fabricated or hardcoded.
+
+<img src="./public/bazar-hero.png" alt="BazarDor hero artwork" width="100%"/>
+
+> The image above is the project's existing hero artwork, **not** a captured application screenshot.
+
+## Key features
+
+- **Bengali-first experience** — Bengali product labels, units, prices, percentages, and numerals.
+- **Price movement dashboard** — highlights the six largest price increases and decreases.
+- **Live price ticker** — continuous scrolling product-price highlights.
+- **Category browsing and sorting** — numeric low-to-high and high-to-low price sorting.
+- **Protected product details** — minimum, maximum, average, and bazaar-level prices.
+- **Accounts and profiles** — email/password authentication via Better Auth; optional Google and GitHub OAuth when configured.
+- **Responsive interface** — mobile-friendly cards, loading and empty states, API errors, invalid routes, and authentication redirects.
+- **Trustworthy data handling** — unavailable API data is shown as an error rather than replaced with fake market records.
+
+## Tech stack
+
+| Layer | Technology |
+| --- | --- |
+| Framework | Next.js 16 (App Router), React 19 |
+| Language | TypeScript 5 |
+| UI | Tailwind CSS 4, scoped CSS design tokens |
+| Authentication | Better Auth 1.7 |
+| Persistence | Drizzle ORM, SQLite/libSQL; Turso supported for deployment |
+| Notifications | React Hot Toast |
+| Product data | External BazarDor API |
+| Quality tools | ESLint and TypeScript |
+
+### Main dependencies
+
+Runtime dependencies, as recorded in `package.json`: `next`, `react`, `react-dom`, `better-auth`, `drizzle-orm`, `@libsql/client`, and `react-hot-toast`.
+
+Development tooling: `typescript`, `tailwindcss`, `@tailwindcss/turbopack`, `eslint`, `eslint-config-next`, and React/Node type packages.
+
+## Run locally
+
+**Prerequisites:** Node.js and npm, plus a working internet connection for the market data API.
 
 ```bash
+git clone https://github.com/the3zer0/Bazardor.git
+cd Bazardor
 npm install
 cp .env.example .env.local
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+On Windows PowerShell, use `Copy-Item .env.example .env.local` instead of `cp` if needed. Open **http://localhost:3000**.
 
-For local development, Better Auth stores data in `auth.db`, which is ignored by Git. Set `BETTER_AUTH_SECRET` to a long random value. Change the API with `BAZARDOR_API_URL`; the alternative is `https://api.abcz.workers.dev/api/bazardor`.
+### Configure environment variables
 
-For Vercel, connect a Turso database to the project so Vercel provides `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` in Production and Preview. The app uses those credentials when present and creates Better Auth's core tables the first time the auth endpoint is used. Without Turso credentials, local development continues to use `BETTER_AUTH_DB_PATH` (default `auth.db`).
+Review and edit `.env.local` before starting:
 
-## Authentication configuration
-
-Email/password auth works with the local SQLite database. Google and GitHub sign-in require the matching client ID and secret in `.env.local`. Their OAuth app callback URLs for local development are:
-
-- Google: `http://localhost:3000/api/auth/callback/google`
-- GitHub: `http://localhost:3000/api/auth/callback/github`
-
-Create the provider apps in these consoles:
-
-1. In [Google Cloud Console](https://console.cloud.google.com/), open **APIs & Services > Credentials**, create an **OAuth client ID** for a **Web application**, and add the Google callback URL below under **Authorized redirect URIs**.
-2. In GitHub, open **Settings > Developer settings > OAuth Apps > New OAuth App**, set the homepage to `http://localhost:3000`, and add the GitHub callback URL below as the **Authorization callback URL**. The app must request the `user:email` scope so private email addresses can be used for sign-in.
-
-Register these exact local callback URLs:
-
-- Google: `http://localhost:3000/api/auth/callback/google`
-- GitHub: `http://localhost:3000/api/auth/callback/github`
-
-Copy the resulting client IDs and secrets into your local `.env.local`; never commit them. The `.env.example` values are safe placeholders only. Without provider credentials, selecting a provider shows a configuration message.
-
-```env
+```dotenv
 BETTER_AUTH_SECRET=replace-with-a-long-random-secret
 BETTER_AUTH_URL=http://localhost:3000
 BETTER_AUTH_DB_PATH=auth.db
+BAZARDOR_API_URL=https://api.api-store.workers.dev/api/bazardor
+
+# Optional persistent database for cloud deployment
+TURSO_DATABASE_URL=
+TURSO_AUTH_TOKEN=
+
+# Optional OAuth providers; leave empty until configured
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
 ```
 
-Social OAuth callback URLs should point to `/api/auth/callback/google` and `/api/auth/callback/github`. Email verification and password reset are intentionally not enabled for this assignment.
+- **Local database:** SQLite is stored in `auth.db` by default; the file is Git-ignored.
+- **Cloud database:** Configure `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` for persistent Turso storage on Vercel.
+- **OAuth callback URLs:**
+  - Google: `http://localhost:3000/api/auth/callback/google`
+  - GitHub: `http://localhost:3000/api/auth/callback/github`
+- In production, set `BETTER_AUTH_URL` and `BETTER_AUTH_SECRET` to valid production values and configure provider callbacks for your deployed domain.
+- Never commit `.env.local` or real OAuth secrets. Email verification and password-reset flows are not enabled in this project.
 
-## API assumptions
+Without OAuth credentials, social sign-in is not available; email/password registration is supported locally.
 
-The API returns numeric `today`, `yesterday`, `change.pct`, and market `min`/`max` values. Product details use the confirmed `markets` array rather than inventing bazaar data. If a market record includes an optional `previous` value, its current midpoint is compared with that same-market record; without it, the market change indicator remains neutral. If the API is unavailable, the UI shows an explicit error instead of substituting fabricated products.
+## Data source
 
-## Checks
+The configured default endpoint is:
 
-```bash
-npm run lint
-npx tsc --noEmit
-npm run build
+```text
+https://api.api-store.workers.dev/api/bazardor
 ```
 
-The design references remain in the project root as `Bazardor _ Assignment-07.fig` and `Bazardor -Assignment-07.penpot`. Supplied imagery is available from `public/bazar-hero.png` and `public/logo-icon.png`.
+Set `BAZARDOR_API_URL` to a compatible endpoint if the upstream service changes. The UI consumes current/previous prices, price change percentages, and market minimum/maximum records. A per-market change indicator depends on an optional previous value for that specific market.
+
+Because the data comes from a third-party API, availability and values may change independently of this repository.
+
+## Available commands
+
+| Command | Purpose |
+| --- | --- |
+| `npm run dev` | Start the local development server |
+| `npm run lint` | Run ESLint |
+| `npx tsc --noEmit` | Type-check without writing output |
+| `npm run build` | Create a production build |
+| `npm run start` | Serve a built app |
+
+## Project structure
+
+```text
+app/                 Next.js routes and pages
+components/          UI components
+lib/                 Data, authentication, and database logic
+public/              Logo and hero artwork
+proxy.ts             Request proxy / routing logic
+.env.example         Safe environment-variable template
+README.assignment.md Additional assignment documentation
+package.json         Commands and dependencies
+```
+
+## Deployment
+
+Deploy on a Next.js-compatible host such as Vercel. Add `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and database environment variables in the hosting dashboard. Use a **persistent cloud database** such as Turso in production; a temporary serverless filesystem is not suitable for storing user accounts long term. Update the OAuth callback URLs to your production domain.
+
+**Live site:** https://bazardor-azure.vercel.app
+
+## Design resources
+
+This repository includes the original design reference files:
+
+- `Bazardor _ Assignment-07.fig`
+- `Bazardor -Assignment-07.penpot`
+
+## Author
+
+Created by [Md Rahat Mahmud](https://github.com/the3zer0).
+
+[Explore the live app →](https://bazardor-azure.vercel.app)
